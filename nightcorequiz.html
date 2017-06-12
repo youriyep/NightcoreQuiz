@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="nl">
+    <head>
+        <title>Nightcore Quiz</title>
+        <meta charset="utf-8">
+        <style>
+            #container, form, table{
+                margin: auto;
+                width: 500px;
+                text-align: center;
+                justify-content: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div id='container'>
+            <button id='start'>Start de Quiz!</button>
+        </div>
+        <script>
+            let random;
+            let startnummer;
+            let isset;
+
+            document.getElementById('start').addEventListener('click', start);
+            document.getElementById('start').addEventListener('click', generate);
+
+            const form = {
+                1: {
+                    1: "<div id='button_div'>" +
+                    "<label for='playbutton'>Start nummer:</label><br>" +
+                    "<button id='playbutton'><img height='50px' src='playbutton.png'></button>" +
+                    "</div>" +
+                    "<table>" +
+                    "<tr><td><label for='antwoord'>Liedje:</label></td></tr>" +
+                    "<tr><td><input id='antwoord' type='text' title='Alleen platte text toegestaan (geen nummers of speciale tekens)' required></td></tr>" +
+                    "<tr><td></td></tr>" +
+                    "</table>" +
+                    "<button id='submit'>Check!</button>",
+                    2: "<div id='button_div_full'>" +
+                    "<label for='playbutton'>Hele nummer:</label><br>" +
+                    "<button id='playbuttonfull'><img height='50px' src='playbutton.png'></button>" +
+                    "</div>" +
+                    "<div id='audio_div'>" +
+                    "</div>" +
+                    "<button id='next'>Next</button>"
+                },
+                2: {
+                    1: "audio/awas_cut.wav",
+                    2: "audio/awas_full.mp3",
+                    3: "angelwithashotgun"  
+                },
+                3: {
+                    1: "audio/dwtd_cut.wav",
+                    2: "audio/dwtd_full.mp3",   
+                    3: "dancewiththedevil"
+                },
+                4: {
+                    1: "audio/giag_cut.mp3",
+                    2: "audio/giag_full.mp3",
+                    3: "godisagirl"
+                },
+                5: {
+                    1: "audio/ldd_cut.mp3",
+                    2: "audio/ldd_full.mp3",
+                    3: "ladadee"
+                },
+                6: {
+                    1: "audio/tht_cut.mp3",
+                    2: "audio/tht_full.mp3",
+                    3: "thehangingtree"
+                },
+                7: {
+                    1: "audio/wr_cut.mp3",
+                    2: "audio/wr_full.mp3",
+                    3: "whiterabbit"
+                }
+            };
+
+            function remove(tagid) {
+                document.getElementById(tagid).parentNode.removeChild(document.getElementById(tagid));
+            }
+
+            function generate() {
+                startnummer = random = Math.floor(Math.random() * (7 - 1) + 1);
+                return [startnummer, random];
+            }
+            
+            function start() {
+                document.getElementById('container').innerHTML = '';
+                document.getElementById('container').innerHTML = form[1][1];
+                document.getElementById('playbutton').addEventListener('click', nummer);
+                document.getElementById('submit').addEventListener('click', check);
+                document.getElementById('antwoord').addEventListener('keypress', keypress);
+                document.getElementById('button_div').style.visibility = 'visible';
+                document.getElementById('button_div').style.position = 'relative';
+            }
+
+            function nummer() {
+                const audio = document.createElement('AUDIO');
+                audio.setAttribute('src', form[random + 1][1]);
+                audio.setAttribute('autoplay', 'autoplay');
+                audio.setAttribute('id', 'audio');
+                document.body.appendChild(audio);
+                document.getElementById('button_div').style.visibility = 'hidden';
+                document.getElementById('button_div').style.position = 'absolute';
+            }
+            
+            function nummerfull() {
+                const audio = document.createElement('AUDIO');
+                audio.setAttribute('src', form[random + 1][2]);
+                audio.setAttribute('controls', 'controls');
+                audio.setAttribute('autoplay', 'autoplay');
+                audio.setAttribute('id', 'audiofull');
+                document.getElementById('button_div_full').style.visibility = 'hidden';  
+                document.getElementById('button_div_full').style.position = 'absolute';
+                document.getElementById('audio_div').appendChild(audio);
+                isset = true;
+            }
+
+            function keypress(e){
+                let x = e || window.event;
+                let key = (x.keyCode || x.which);
+                if(key == 13 || key == 3){
+                    check();
+                }
+            }
+
+            function check() {
+                const value = document.getElementById('antwoord').value;
+                const valuewr = value.toLowerCase();
+                const antwoord = valuewr.replace(/\s+/g, '');
+                if (antwoord === form[random + 1][3]){
+                    console.log('werkt');
+                    remove('audio');
+                    document.getElementById('container').innerHTML = '';
+                    document.getElementById('container').innerHTML = form[1][2];
+                    document.getElementById('playbuttonfull').addEventListener('click', nummerfull);
+                    document.getElementById('next').addEventListener('click', loop);
+
+                }   
+            }
+            
+            function loop() {
+                if (isset){
+                    remove('audiofull');
+                    isset = false;
+                }
+                random = random + 1;
+                if (random === 7){
+                    random = 1;
+                }
+                if (random === startnummer){
+                    console.log('alles werkt');
+                    document.getElementById('container').innerHTML = '';
+
+                } else {
+                    start();
+                }
+            }
+        </script>
+    </body>
+</html>
